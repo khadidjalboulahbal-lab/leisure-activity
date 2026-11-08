@@ -1,0 +1,511 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>My Free Time</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;800&family=Nunito:wght@500;700;800&display=swap">
+<style>
+/* Layout: one column — tabs for Learn (8 animated cards), Task 1 (watch & choose), Task 2 (complete the sentence) */
+:root{
+  --bg:#FFFFFF; --surface:#F3F8FF; --stage:#EAF3FF; --ink:#12284A; --muted:#55657F; --line-ui:#D3E3F7;
+  --primary:#0A7BFF; --primary-soft:#DCEBFF; --sun:#FFC531; --on-sun:#12284A; --tab-sub:#DCEBFF;
+  --good:#1FA67A; --good-soft:#DDF6EC; --bad:#E0483A; --bad-soft:#FFE3DF;
+  /* character colours (same in both themes) */
+  --blue:#0A7BFF; --blue-d:#0866D6; --skin:#3B7DFF; --line:#1C3FE6; --yellow:#FFC531; --yellow-d:#E2A92A; --water:#BFDBFF; --paper:#FFFFFF;
+  --display:"Baloo 2","Nunito",system-ui,sans-serif; --body:"Nunito",system-ui,-apple-system,sans-serif;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0E1D35; --surface:#15294A; --stage:#1B3358; --ink:#EEF5FF; --muted:#A9BCD8; --line-ui:#2A4570;
+  --primary:#4D97FF; --primary-soft:#1D3966; --good:#46D19F; --good-soft:#163A30; --bad:#FF7A6C; --bad-soft:#41201E; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0E1D35; --surface:#15294A; --stage:#1B3358; --ink:#EEF5FF; --muted:#A9BCD8; --line-ui:#2A4570;
+  --primary:#4D97FF; --primary-soft:#1D3966; --good:#46D19F; --good-soft:#163A30; --bad:#FF7A6C; --bad-soft:#41201E; color-scheme:dark}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.5;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:20px 48px}
+.wrap{max-width:960px;margin:0 auto;display:flex;flex-direction:column;gap:22px}
+header{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:12px}
+.level{font-weight:800;font-size:.8rem;letter-spacing:.08em;text-transform:uppercase;color:var(--on-sun);background:var(--sun);padding:4px 12px;border-radius:999px;display:inline-block}
+h1{font-family:var(--display);font-weight:800;font-size:clamp(2rem,6vw,2.9rem);line-height:1.05;margin:6px 0 0;text-wrap:balance}
+.sub{color:var(--muted);margin:2px 0 0}
+.speed{display:flex;gap:6px;background:var(--surface);border:1px solid var(--line-ui);border-radius:999px;padding:4px}
+.speed button{border:0;background:transparent;color:var(--muted);font:800 .9rem var(--body);padding:8px 14px;border-radius:999px;cursor:pointer}
+.speed button[aria-pressed="true"]{background:var(--primary);color:#fff}
+.tabs{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.tab{border:2px solid var(--line-ui);background:var(--surface);color:var(--ink);border-radius:16px;padding:12px 8px;font:800 1rem var(--body);cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:2px}
+.tab small{font-weight:700;color:var(--muted);font-size:.8rem;text-align:center}
+.tab[aria-selected="true"]{border-color:var(--primary);background:var(--primary);color:#fff}
+.tab[aria-selected="true"] small{color:var(--tab-sub)}
+button:focus-visible{outline:3px solid var(--sun);outline-offset:2px}
+.panel{display:flex;flex-direction:column;gap:16px}
+.hint{background:var(--surface);border:1px dashed var(--line-ui);border-radius:14px;padding:12px 16px;color:var(--muted);margin:0}
+.hint b{color:var(--ink)}
+.novoice{background:var(--bad-soft);border-radius:14px;padding:12px 16px;margin:0}
+
+/* learn cards */
+.cards{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+@media (max-width:860px){.cards{grid-template-columns:repeat(2,1fr)}}
+@media (max-width:480px){.cards{grid-template-columns:1fr}}
+.card{background:var(--surface);border:2px solid var(--line-ui);border-radius:22px;padding:10px 10px 14px;display:flex;flex-direction:column;gap:6px;min-width:0}
+.stage{background:var(--stage);border-radius:16px;aspect-ratio:26/25;max-width:100%;overflow:hidden}
+.stage svg{display:block;width:100%;height:100%}
+.tag{align-self:flex-start;font-size:.72rem;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--primary);background:var(--primary-soft);padding:2px 10px;border-radius:999px;margin-top:4px}
+.phrase{font-family:var(--display);font-weight:800;font-size:1.35rem;line-height:1.15;margin:0}
+.mean{color:var(--muted);font-size:.9rem;margin:0}
+.ex{font-size:.95rem;margin:0}
+.listen{align-self:flex-start;margin-top:4px;border:0;background:var(--sun);color:var(--on-sun);font:800 .9rem var(--body);padding:8px 16px;border-radius:999px;cursor:pointer}
+.listen:hover{filter:brightness(1.05)}
+
+/* tasks */
+.box{background:var(--surface);border:2px solid var(--line-ui);border-radius:24px;padding:22px clamp(16px,4vw,32px);display:flex;flex-direction:column;gap:16px;align-items:center;text-align:center}
+.progress{width:100%;display:flex;align-items:center;gap:10px;font-weight:800;color:var(--muted);font-size:.9rem;font-variant-numeric:tabular-nums}
+.bar{flex:1;height:10px;background:var(--primary-soft);border-radius:99px;overflow:hidden}
+.bar i{display:block;height:100%;background:var(--primary);transition:width .3s}
+.big-stage{width:min(340px,100%)}
+.q{font-family:var(--display);font-weight:800;font-size:1.3rem;margin:0}
+.choices{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;width:100%;max-width:560px}
+.choice{border:2px solid var(--line-ui);background:var(--bg);color:var(--ink);border-radius:16px;padding:14px 10px;cursor:pointer;font:800 1.1rem var(--body);min-height:58px}
+.choice:hover:not(:disabled){border-color:var(--primary)}
+.choice.right{border-color:var(--good);background:var(--good-soft)}
+.choice.wrong{border-color:var(--bad);background:var(--bad-soft)}
+.choice:disabled{cursor:default}
+.t2-grid{display:grid;grid-template-columns:200px 1fr;gap:20px;align-items:center;width:100%;text-align:left}
+@media (max-width:600px){.t2-grid{grid-template-columns:1fr;text-align:center}.t2-grid .stage{max-width:240px;margin:0 auto;width:100%}}
+.mystery{display:grid;place-items:center;font-family:var(--display);font-weight:800;font-size:4rem;color:var(--primary)}
+.sentence{font-family:var(--display);font-weight:800;font-size:clamp(1.3rem,4vw,1.7rem);line-height:1.3;margin:0;text-wrap:balance}
+.gap{display:inline-block;min-width:5em;border-bottom:3px solid var(--primary);color:var(--primary);text-align:center}
+.t2-choices{grid-template-columns:repeat(3,1fr);max-width:none}
+@media (max-width:600px){.t2-choices{grid-template-columns:1fr}}
+.feedback{min-height:1.6em;font-weight:800;font-size:1.05rem;margin:0}
+.feedback.ok{color:var(--good)} .feedback.no{color:var(--bad)}
+.row{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
+.btn{border:2px solid var(--primary);background:transparent;color:var(--primary);font:800 1rem var(--body);padding:10px 22px;border-radius:999px;cursor:pointer}
+.btn.solid{background:var(--primary);color:#fff}
+.stars{font-size:2.6rem;letter-spacing:4px}
+.score{font-family:var(--display);font-weight:800;font-size:2.4rem;margin:0;font-variant-numeric:tabular-nums}
+
+/* ===== character ===== */
+.limb{fill:none;stroke:var(--blue);stroke-width:18;stroke-linecap:round}
+.limb.back{stroke:var(--blue-d)}
+.foot{stroke:var(--blue);stroke-width:12;stroke-linecap:round}
+.foot.back{stroke:var(--blue-d)}
+.hand{fill:var(--blue)} .hand.back{fill:var(--blue-d)}
+.torso{fill:var(--blue)} .skin{fill:var(--skin)}
+.ln{fill:none;stroke:var(--line);stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.pupil{fill:var(--line)} .eye{fill:#fff}
+.y{fill:var(--yellow)} .yd{fill:var(--yellow-d)}
+.ys{fill:none;stroke:var(--yellow);stroke-width:6;stroke-linecap:round;stroke-linejoin:round}
+.ground{stroke:var(--line);stroke-width:2.5;stroke-linecap:round}
+.dashes{stroke:var(--line);stroke-width:2.5;stroke-dasharray:18 22;animation:dash .5s linear infinite}
+.speedl{stroke:var(--primary);stroke-width:3;stroke-linecap:round;opacity:.5;animation:whoosh .7s linear infinite}
+.lbl{fill:var(--ink);font:800 11px var(--body);text-anchor:middle}
+.fig,.armA,.armB,.fore,.legA,.legB,.shin,.head,.piv{transform-box:view-box}
+.armA,.armB{transform-origin:100px 84px}
+.fore{transform-origin:100px 116px}
+.legA,.legB{transform-origin:100px 150px}
+.shin{transform-origin:100px 190px}
+.head{transform-origin:111px 72px}
+.piv{transform-origin:0 0}
+.spin,.fb{transform-box:fill-box;transform-origin:center}
+@keyframes dash{to{stroke-dashoffset:40}}
+@keyframes whoosh{from{transform:translateX(30px);opacity:0}40%{opacity:.6}to{transform:translateX(-30px);opacity:0}}
+@keyframes bob{to{transform:translateY(-5px)}}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes rise{0%{transform:translate(0,0);opacity:0}15%{opacity:1}100%{transform:translate(18px,-70px);opacity:0}}
+.rise{animation:rise 2.4s ease-out infinite both}
+
+/* reading */
+.s-read .armA{transform:rotate(-40deg)} .s-read .armA .fore{transform:rotate(-90deg)}
+.s-read .armB{transform:rotate(-30deg)} .s-read .armB .fore{transform:rotate(-90deg)}
+.s-read .head{transform:rotate(6deg)}
+.s-read .pupil{animation:scan 1.6s ease-in-out infinite alternate}
+@keyframes scan{from{transform:translateX(-1px)}to{transform:translateX(1.6px)}}
+.turn{transform-box:fill-box;transform-origin:0% 50%;animation:turn 3.2s ease-in-out infinite}
+@keyframes turn{0%,55%{transform:scaleX(1)}80%,100%{transform:scaleX(-1)}}
+
+/* listening to music */
+.s-music .fig{animation:bob .5s ease-in-out infinite alternate}
+.s-music .head{animation:nod .5s ease-in-out infinite alternate}
+@keyframes nod{from{transform:rotate(-3deg)}to{transform:rotate(7deg)}}
+.s-music .armB{animation:snapArm .5s ease-in-out infinite alternate}
+.s-music .armB .fore{transform:rotate(-95deg)}
+@keyframes snapArm{from{transform:rotate(-25deg)}to{transform:rotate(-40deg)}}
+.s-music .armA{transform:rotate(10deg)}
+.s-music .legB .shin{animation:tap .5s ease-in-out infinite alternate}
+.s-music .legB{transform:rotate(-8deg)}
+@keyframes tap{from{transform:rotate(0)}to{transform:rotate(8deg)}}
+
+/* watching movies */
+.s-movie .fig{transform:translate(-14px,40px)}
+.s-movie .legA{transform:rotate(-84deg)} .s-movie .legB{transform:rotate(-90deg)}
+.s-movie .legA .shin{transform:rotate(84deg)} .s-movie .legB .shin{transform:rotate(90deg)}
+.s-movie .armA{transform:rotate(-20deg)} .s-movie .armA .fore{transform:rotate(-40deg)}
+.s-movie .armB{animation:eatU 2.4s ease-in-out infinite}
+.s-movie .armB .fore{animation:eatF 2.4s ease-in-out infinite}
+@keyframes eatU{0%,30%,100%{transform:rotate(-20deg)}55%,75%{transform:rotate(-60deg)}}
+@keyframes eatF{0%,30%,100%{transform:rotate(-45deg)}55%,75%{transform:rotate(-150deg)}}
+.flick{animation:flick 1.8s steps(1) infinite}
+@keyframes flick{0%{fill:var(--primary)}25%{fill:var(--yellow)}50%{fill:var(--skin)}75%{fill:var(--water)}}
+.beam{animation:beam 1.8s steps(1) infinite}
+@keyframes beam{0%{opacity:.18}25%{opacity:.3}50%{opacity:.12}75%{opacity:.25}}
+.hop{transform-box:fill-box;transform-origin:center;animation:hop 1.2s ease-in-out infinite}
+@keyframes hop{0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-9px)}}
+
+/* crafting */
+.s-craft .armA{transform:rotate(-50deg)} .s-craft .armA .fore{transform:rotate(-50deg)}
+.s-craft .armB{transform:rotate(-30deg)} .s-craft .armB .fore{transform:rotate(-80deg)}
+.s-craft .head{transform:rotate(8deg)}
+.bladeT{animation:snipT .5s ease-in-out infinite alternate}
+.bladeB{animation:snipB .5s ease-in-out infinite alternate}
+@keyframes snipT{from{transform:rotate(-16deg)}to{transform:rotate(0)}}
+@keyframes snipB{from{transform:rotate(16deg)}to{transform:rotate(0)}}
+.bit{animation:fallBit 2.4s ease-in infinite both}
+@keyframes fallBit{0%{transform:translate(0,0) rotate(0);opacity:0}10%{opacity:1}100%{transform:translate(-10px,120px) rotate(200deg);opacity:0}}
+.sway{transform-box:view-box;transform-origin:20px 0;animation:sway 3s ease-in-out infinite alternate}
+@keyframes sway{from{transform:rotate(-2deg)}to{transform:rotate(2deg)}}
+
+/* hiking */
+.s-hike .fig{animation:bob .45s ease-in-out infinite alternate}
+.s-hike .legA,.s-hike .legB{animation:walkT .9s ease-in-out infinite alternate}
+.s-hike .legA .shin,.s-hike .legB .shin{animation:walkS .9s ease-in-out infinite alternate}
+.s-hike .armA,.s-hike .armB{animation:walkArm .9s ease-in-out infinite alternate}
+.s-hike .legB,.s-hike .legB .shin,.s-hike .armA{animation-delay:-.9s}
+@keyframes walkT{from{transform:rotate(-26deg)}to{transform:rotate(24deg)}}
+@keyframes walkS{from{transform:rotate(4deg)}to{transform:rotate(36deg)}}
+@keyframes walkArm{from{transform:rotate(-24deg)}to{transform:rotate(24deg)}}
+.slide{animation:slide 9s linear infinite}
+.slide.fast{animation-duration:4s}
+@keyframes slide{to{transform:translateX(-160px)}}
+
+/* cycling */
+.s-bike .fig{animation:bob .5s ease-in-out infinite alternate}
+.s-bike .legA,.s-bike .legB{animation:pedT .5s ease-in-out infinite alternate}
+.s-bike .legA .shin,.s-bike .legB .shin{animation:pedS .5s ease-in-out infinite alternate}
+.s-bike .legB,.s-bike .legB .shin{animation-delay:-.5s}
+.s-bike .armA,.s-bike .armB{transform:rotate(-55deg)} .s-bike .fore{transform:rotate(-10deg)}
+@keyframes pedT{from{transform:rotate(-58deg)}to{transform:rotate(-22deg)}}
+@keyframes pedS{from{transform:rotate(98deg)}to{transform:rotate(48deg)}}
+.s-bike .spin{animation:spin 1s linear infinite}
+
+/* playing sports: dribbling */
+.s-sport .fig{transform:translateY(5px)}
+.s-sport .legA{transform:rotate(-14deg)} .s-sport .legA .shin{transform:rotate(22deg)}
+.s-sport .legB{transform:rotate(10deg)} .s-sport .legB .shin{transform:rotate(12deg)}
+.s-sport .armA{transform:rotate(-30deg)} .s-sport .armA .fore{transform:rotate(-40deg)}
+.s-sport .armB{transform:rotate(-25deg)}
+.s-sport .armB .fore{animation:push .7s infinite}
+@keyframes push{0%,100%{transform:rotate(-50deg);animation-timing-function:ease-in}50%{transform:rotate(-18deg);animation-timing-function:ease-out}}
+.ball{animation:dribble .7s infinite}
+@keyframes dribble{0%,100%{transform:translateY(0);animation-timing-function:ease-in}50%{transform:translateY(68px);animation-timing-function:ease-out}}
+.bshadow{fill:var(--line);opacity:.15;transform-box:fill-box;transform-origin:center;animation:bshad .7s infinite}
+@keyframes bshad{0%,100%{transform:scale(.45);animation-timing-function:ease-in}50%{transform:scale(1);animation-timing-function:ease-out}}
+
+/* learning a new language */
+.s-lang .armA{transform:rotate(140deg)} .s-lang .armA .fore{transform:rotate(25deg)}
+.s-lang .armB{transform:rotate(-30deg)} .s-lang .armB .fore{transform:rotate(-80deg)}
+.s-lang .fig{animation:bob 1s ease-in-out infinite alternate}
+.bub{transform-box:fill-box;transform-origin:20% 100%;animation:bub 7.5s ease infinite both}
+@keyframes bub{0%{opacity:0;transform:scale(.5)}3%,17%{opacity:1;transform:scale(1)}20%,100%{opacity:0;transform:scale(.5)}}
+.blink{animation:blink 1s steps(1) infinite}
+@keyframes blink{50%{opacity:0}}
+
+@media (prefers-reduced-motion:reduce){svg *{animation-play-state:paused!important}}
+</style>
+
+<div class="wrap">
+  <header>
+    <div>
+      <span class="level">English · A2</span>
+      <h1>My Free Time</h1>
+      <p class="sub">Words for hobbies and free-time activities. Watch, listen, and practise.</p>
+    </div>
+    <div class="speed" role="group" aria-label="Voice speed">
+      <button type="button" id="spd-slow" data-rate="0.75" aria-pressed="true">🐢 Slow</button>
+      <button type="button" id="spd-normal" data-rate="0.95" aria-pressed="false">🐇 Normal</button>
+    </div>
+  </header>
+
+  <p class="novoice" id="novoice" hidden>This browser cannot play the voice. Please open the page in Chrome, Edge or Safari.</p>
+
+  <nav class="tabs" role="tablist">
+    <button class="tab" role="tab" id="tab-learn" aria-selected="true" data-panel="learn">Learn<small>8 words</small></button>
+    <button class="tab" role="tab" id="tab-t1" aria-selected="false" data-panel="t1">Task 1<small>Watch &amp; choose</small></button>
+    <button class="tab" role="tab" id="tab-t2" aria-selected="false" data-panel="t2">Task 2<small>Complete the sentence</small></button>
+  </nav>
+
+  <section class="panel" id="learn">
+    <p class="hint">Watch each picture. Press <b>Listen</b> to hear the word and the example. Repeat them out loud.</p>
+    <div class="cards" id="cards"></div>
+  </section>
+
+  <section class="panel" id="t1" hidden>
+    <p class="hint"><b>Task 1.</b> Watch the animation. What is he doing? Choose the correct words.</p>
+    <div class="box" id="t1-box"></div>
+  </section>
+
+  <section class="panel" id="t2" hidden>
+    <p class="hint"><b>Task 2.</b> Read the sentence and choose the missing words. When you are right, you will see the picture and hear the sentence.</p>
+    <div class="box" id="t2-box"></div>
+  </section>
+</div>
+
+<script>
+/* ---------- the character (same man as "Get Moving") ---------- */
+function person(propA="", propB="", o={}){
+  return `<g class="fig">
+  ${o.back||""}
+  <g class="legA"><line x1="100" y1="150" x2="100" y2="190" class="limb back"/><g class="shin"><line x1="100" y1="190" x2="100" y2="228" class="limb back"/><path d="M98 229 h14" class="foot back"/></g></g>
+  <g class="armA"><line x1="100" y1="84" x2="100" y2="116" class="limb back"/><g class="fore"><line x1="100" y1="116" x2="100" y2="140" class="limb back"/><circle cx="100" cy="145" r="8" class="hand back"/>${propA}</g></g>
+  <path class="torso" d="M79 84 C79 72 89 68 100 68 C112 68 122 72 122 84 L116 150 C116 158 108 161 100 161 C92 161 85 158 84 150 Z"/>
+  <path class="ln" d="M100 96 v40" opacity=".35"/>
+  <g class="legB"><line x1="100" y1="150" x2="100" y2="190" class="limb"/><g class="shin"><line x1="100" y1="190" x2="100" y2="228" class="limb"/><path d="M98 229 h14" class="foot"/></g></g>
+  <g class="head">
+    <path class="skin" d="M95 32 L95.5 56 C96 66 103 72 111 72 C120 72 126 65 126.5 55 L127 33 Z"/>
+    <path class="skin" d="M87 33 C86 28 90 25 96 25 C102 25 105 22 108 17 C111 11 116 7 123 7 C131 7 137 13 137 21 C137 29 131 35 124 36 L96 37 C91 37 88 36 87 33 Z"/>
+    <path class="ln" d="M126 32 c-6 -1 -9 -8 -5 -12 c4 -4 10 -1 9 4 c-.5 3 -3 4 -5 4"/>
+    <path class="ln" d="M100 41 q3 -4 7 -1"/>
+    <ellipse class="eye" cx="104" cy="46" rx="3.7" ry="4.3"/><circle class="pupil" cx="105" cy="46.5" r="1.9"/>
+    <ellipse class="eye" cx="117.5" cy="46" rx="3.4" ry="4.3"/><circle class="pupil" cx="118.4" cy="46.5" r="1.9"/>
+    <path class="ln" d="M112 43 V55.5 H107"/>
+    <path class="ln" d="M99.5 56.5 q0 7 9.5 6.5"/>
+    ${o.hat||""}
+  </g>
+  <g class="armB"><line x1="100" y1="84" x2="100" y2="116" class="limb"/><g class="fore"><line x1="100" y1="116" x2="100" y2="140" class="limb"/><circle cx="100" cy="145" r="8" class="hand"/>${propB}</g></g>
+  ${o.front||""}
+</g>`;
+}
+const GROUND = `<path class="ground" d="M-15 238 H215"/>`;
+const MOVING_GROUND = `<path class="dashes" d="M-40 238 H260"/><g><path class="speedl" d="M-20 100 h26"/><path class="speedl" style="animation-delay:-.25s" d="M-26 132 h34"/><path class="speedl" style="animation-delay:-.5s" d="M-14 164 h20"/></g>`;
+
+const SCENES = {
+  read: () => `${GROUND}
+    <text x="150" y="70" class="rise" style="font:800 15px var(--display);fill:var(--line)">a</text>
+    <text x="165" y="70" class="rise" style="font:800 15px var(--display);fill:var(--yellow-d);animation-delay:-.8s">b</text>
+    <text x="178" y="70" class="rise" style="font:800 15px var(--display);fill:var(--line);animation-delay:-1.6s">c</text>
+    ${person("","",{front:`
+      <rect x="124" y="74" width="62" height="32" rx="4" class="y"/>
+      <rect x="127" y="77" width="28" height="26" rx="2" fill="var(--paper)"/>
+      <rect x="155" y="77" width="28" height="26" rx="2" fill="var(--paper)"/>
+      <path class="ln" d="M131 84 h20 M131 90 h20 M131 96 h14 M159 84 h20 M159 90 h20 M159 96 h12" style="stroke-width:1.6" opacity=".6"/>
+      <rect class="turn" x="155" y="77" width="28" height="26" rx="2" fill="var(--paper)" stroke="var(--water)" stroke-width="1"/>
+      <path d="M155 76 v30" stroke="var(--yellow-d)" stroke-width="2"/>
+      <circle cx="140" cy="100" r="6" class="hand"/><circle cx="172" cy="99" r="6" class="hand"/>`})}`,
+  music: () => `${GROUND}
+    <text x="146" y="60" class="rise" style="font:800 24px var(--body);fill:var(--line)">♪</text>
+    <text x="170" y="84" class="rise" style="font:800 22px var(--body);fill:var(--yellow-d);animation-delay:-.8s">♫</text>
+    <text x="10" y="70" class="rise" style="font:800 22px var(--body);fill:var(--line);animation-delay:-1.6s">♪</text>
+    <text x="30" y="110" class="rise" style="font:800 20px var(--body);fill:var(--yellow-d);animation-delay:-.4s">♫</text>
+    ${person("","",{hat:`
+      <path d="M90 47 C86 14 134 4 134 40" fill="none" stroke="var(--yellow)" stroke-width="5" stroke-linecap="round"/>
+      <rect x="85" y="40" width="13" height="20" rx="6" class="y"/>
+      <rect x="89" y="44" width="5" height="12" rx="2.5" class="yd"/>`,
+      front:`<rect x="132" y="94" width="13" height="22" rx="3" fill="var(--line)"/><rect x="134.5" y="97" width="8" height="12" rx="1.5" fill="var(--yellow)"/>`})}`,
+  movie: () => `${GROUND}
+    <rect x="34" y="118" width="24" height="106" rx="10" class="yd"/>
+    <rect x="34" y="198" width="110" height="26" rx="8" class="y"/>
+    <path d="M44 224 v12 M134 224 v12" stroke="var(--yellow-d)" stroke-width="5" stroke-linecap="round"/>
+    <polygon class="beam" points="160,74 160,136 108,100" fill="var(--yellow)"/>
+    <rect x="156" y="62" width="70" height="84" rx="6" fill="var(--line)"/>
+    <rect class="flick" x="161" y="67" width="60" height="68" rx="3" fill="var(--primary)"/>
+    <path d="M184 89 l14 12 l-14 12z" fill="var(--paper)" opacity=".9"/>
+    <path d="M178 146 l-8 18 M204 146 l8 18" stroke="var(--line)" stroke-width="4" stroke-linecap="round"/>
+    ${person("","",{front:`
+      <g transform="translate(0 -40)">
+        <path d="M114 152 h28 l-4 28 h-20 z" fill="var(--paper)" stroke="var(--yellow-d)" stroke-width="2"/>
+        <path d="M120 153 v26 M128 153 v26 M136 153 v26" stroke="var(--yellow)" stroke-width="4"/>
+        <circle cx="119" cy="150" r="5" fill="var(--paper)" stroke="var(--yellow-d)" stroke-width="1.5"/>
+        <circle class="hop" cx="128" cy="148" r="5.5" fill="var(--paper)" stroke="var(--yellow-d)" stroke-width="1.5"/>
+        <circle cx="137" cy="150" r="5" fill="var(--paper)" stroke="var(--yellow-d)" stroke-width="1.5"/>
+      </g>`})}`,
+  craft: () => `${GROUND}
+    <g class="sway"><path d="M-30 10 Q15 40 70 12" fill="none" stroke="var(--line)" stroke-width="2"/>
+      ${[[-16,17],[2,23],[20,25],[38,22],[56,16]].map(([x,y],i)=>`<path d="M${x-8} ${y} L${x+8} ${y} L${x} ${y+16}Z" fill="${i%2?'var(--primary)':'var(--yellow)'}"/>`).join("")}</g>
+    <path class="bit y" d="M160 112 l7 2 l-4 6z"/>
+    <path class="bit y" style="animation-delay:-.8s" d="M172 112 l6 -1 l-2 7z"/>
+    <path class="bit y" style="animation-delay:-1.6s" d="M182 108 l5 3 l-6 3z"/>
+    ${person("","",{front:`
+      <path d="M178 72 l5.5 11 l12 1.8 l-8.7 8.5 l2 12 l-10.8 -5.6 l-10.8 5.6 l2 -12 l-8.7 -8.5 l12 -1.8z" class="y"/>
+      <path d="M178 76 l4.4 8.8 l9.6 1.4" fill="none" stroke="var(--line)" stroke-width="1.6" stroke-dasharray="3 3"/>
+      <circle cx="153" cy="99" r="7.5" class="hand back"/>
+      <g transform="translate(150 101)">
+        <circle cx="-9" cy="-5" r="4.5" fill="none" stroke="var(--yellow-d)" stroke-width="3"/>
+        <circle cx="-9" cy="6" r="4.5" fill="none" stroke="var(--yellow-d)" stroke-width="3"/>
+        <g class="piv bladeT"><path d="M-5 -3 L0 0 L20 -2" fill="none" stroke="var(--line)" stroke-width="3" stroke-linecap="round"/></g>
+        <g class="piv bladeB"><path d="M-5 4 L0 0 L20 2" fill="none" stroke="var(--line)" stroke-width="3" stroke-linecap="round"/></g>
+        <circle r="2" fill="var(--yellow)"/>
+      </g>
+      <circle cx="141" cy="102" r="7.5" class="hand"/>`})}`,
+  hike: () => `<circle cx="34" cy="40" r="16" class="y"/>
+    <g class="slide">${[0,160,320].map(o=>`
+      <path d="M${-40+o} 238 L${30+o} 130 L${100+o} 238Z" fill="var(--water)"/>
+      <path d="M${16+o} 151.6 L${30+o} 130 L${44+o} 151.6 L${37+o} 147 L${30+o} 153 L${23+o} 147Z" fill="var(--paper)"/>
+      <path d="M${50+o} 238 L${100+o} 166 L${150+o} 238Z" fill="var(--water)" opacity=".7"/>`).join("")}</g>
+    <g class="slide fast">${[0,160,320].map(o=>`
+      <path d="M${-6+o} 238 L${4+o} 208 L${14+o} 238Z" class="yd"/><path d="M${4+o} 238 v6" stroke="var(--yellow-d)" stroke-width="3"/>
+      <path d="M${64+o} 238 L${76+o} 202 L${88+o} 238Z" class="y"/>`).join("")}</g>
+    ${GROUND}
+    ${person("","",{back:`<rect x="62" y="80" width="26" height="58" rx="9" class="y"/><rect x="66" y="112" width="18" height="16" rx="4" class="yd"/>`,
+      hat:`<path d="M93 33 C92 14 108 6 120 8 C132 10 136 22 134 33 Z" class="yd"/><path d="M88 33 H144" stroke="var(--yellow-d)" stroke-width="4" stroke-linecap="round"/>`})}`,
+  bike: () => `${MOVING_GROUND}
+    <g class="spin"><circle cx="64" cy="206" r="28" fill="none" stroke="var(--yellow)" stroke-width="6"/><path d="M64 180 V232 M38 206 H90 M46 188 L82 224 M82 188 L46 224" stroke="var(--yellow-d)" stroke-width="2.5"/></g>
+    <g class="spin"><circle cx="164" cy="206" r="28" fill="none" stroke="var(--yellow)" stroke-width="6"/><path d="M164 180 V232 M138 206 H190 M146 188 L182 224 M182 188 L146 224" stroke="var(--yellow-d)" stroke-width="2.5"/></g>
+    <path class="ys" d="M64 206 L108 206 L94 166 Z M94 166 L150 140 M108 206 L150 140 L164 206 M150 140 L148 122 L160 118"/>
+    <path class="ys" d="M82 162 h24" style="stroke-width:8"/>
+    <g class="spin"><path d="M108 191 V221" stroke="var(--yellow-d)" stroke-width="4" stroke-linecap="round"/><circle cx="108" cy="206" r="5" class="yd"/></g>
+    ${person("","",{hat:`<path d="M88 35 C88 12 108 3 124 5 C138 7 143 22 139 35 Z" class="y"/><path d="M102 12 l4 10 M114 7 l2 11 M127 8 l-1 11" stroke="var(--yellow-d)" stroke-width="3" stroke-linecap="round"/>`})}`,
+  sport: () => `${GROUND}
+    <rect x="203" y="26" width="6" height="212" rx="3" fill="var(--line)"/>
+    <rect x="188" y="30" width="16" height="50" rx="3" fill="var(--paper)" stroke="var(--line)" stroke-width="3"/>
+    <path d="M166 68 l6 22 h12 l6 -22" fill="none" stroke="var(--water)" stroke-width="2"/><path d="M172 76 h12 M174 84 h9" stroke="var(--water)" stroke-width="2"/>
+    <ellipse cx="178" cy="68" rx="14" ry="3.5" fill="none" stroke="var(--yellow-d)" stroke-width="4"/>
+    <ellipse class="bshadow" cx="138" cy="238" rx="13" ry="3"/>
+    ${person()}
+    <g class="ball"><circle cx="138" cy="158" r="11" class="y"/><path d="M127 158 h22 M138 147 v22 M130 150 q8 8 0 16 M146 150 q-8 8 0 16" fill="none" stroke="var(--yellow-d)" stroke-width="1.8"/></g>`,
+  lang: () => `${GROUND}
+    ${[["Hello!",0],["Hola!",1],["Bonjour!",2],["مرحبا!",3],["Ciao!",4]].map(([w,i])=>`
+      <g class="bub" style="animation-delay:${i*1.5-7.5}s"><path d="M148 14 h66 a10 10 0 0 1 10 10 v14 a10 10 0 0 1 -10 10 h-50 l-12 10 l2 -10 h-6 a10 10 0 0 1 -10 -10 v-14 a10 10 0 0 1 10 -10z" fill="var(--paper)" stroke="var(--line)" stroke-width="2.5"/>
+      <text x="181" y="36" class="lbl" style="font-size:14px;fill:var(--line)">${w}</text></g>`).join("")}
+    ${person(`<path d="M103 148 v13" stroke="var(--blue-d)" stroke-width="7" stroke-linecap="round"/>`,"",{front:`
+      <rect x="136" y="78" width="20" height="32" rx="4" fill="var(--line)"/>
+      <rect x="139" y="82" width="14" height="22" rx="2" fill="var(--yellow)"/>
+      <text x="146" y="96" class="lbl" style="font-size:9px;fill:var(--line)">A→あ</text>
+      <rect class="blink" x="143" y="99" width="6" height="1.6" fill="var(--line)"/>
+      <circle cx="141" cy="104" r="7.5" class="hand"/>`})}`
+};
+function sceneSVG(key, label){
+  return `<svg class="s-${key}" viewBox="-30 0 260 250" role="img" aria-label="${label}">${SCENES[key]()}</svg>`;
+}
+
+/* ---------- words ---------- */
+const WORDS = [
+  {p:"reading", s:"read", tag:"at home", mean:"looking at the words in a book and understanding them", ex:"I like reading before I go to sleep."},
+  {p:"listening to music", s:"music", tag:"anywhere", mean:"hearing songs that you like", ex:"He is listening to music on his headphones."},
+  {p:"watching movies", s:"movie", tag:"at home", mean:"looking at films on TV or at the cinema", ex:"We love watching movies on Friday night."},
+  {p:"crafting", s:"craft", tag:"at home", mean:"making things with your hands, like cards or paper stars", ex:"Crafting helps me relax after school."},
+  {p:"hiking", s:"hike", tag:"outdoors", mean:"walking a long way in nature, often in the mountains", ex:"We go hiking in the mountains every spring."},
+  {p:"cycling", s:"bike", tag:"outdoors", mean:"riding a bike", ex:"Cycling to work is fast and fun."},
+  {p:"playing sports", s:"sport", tag:"outdoors", mean:"doing activities like football, tennis or basketball", ex:"My brother enjoys playing sports with his friends."},
+  {p:"learning a new language", s:"lang", tag:"anywhere", mean:"studying how to speak another language", ex:"I'm learning a new language with an app."}
+];
+const byP = Object.fromEntries(WORDS.map(w=>[w.p,w]));
+const shuffle = a => { a=[...a]; for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]} return a; };
+const cap = s => s[0].toUpperCase()+s.slice(1);
+
+/* ---------- voice ---------- */
+let rate=0.75, voice=null; const synth=window.speechSynthesis;
+if(!synth) document.getElementById("novoice").hidden=false;
+function pickVoice(){ if(!synth) return; const vs=synth.getVoices().filter(v=>/^en[-_]/i.test(v.lang));
+  voice=vs.find(v=>/Google US English|Samantha|Aria|Jenny/i.test(v.name))||vs.find(v=>/en[-_]US/i.test(v.lang))||vs[0]||null; }
+if(synth){ pickVoice(); synth.onvoiceschanged=pickVoice; }
+function say(text,onend){ if(!synth){onend&&onend();return;} synth.cancel();
+  const u=new SpeechSynthesisUtterance(text); u.lang="en-US"; u.rate=rate; if(voice) u.voice=voice; if(onend) u.onend=onend; synth.speak(u); }
+document.querySelectorAll(".speed button").forEach(b=>b.addEventListener("click",()=>{
+  rate=+b.dataset.rate; document.querySelectorAll(".speed button").forEach(x=>x.setAttribute("aria-pressed",x===b)); say("What do you do in your free time?"); }));
+
+/* ---------- tabs ---------- */
+document.querySelectorAll(".tab").forEach(t=>t.addEventListener("click",()=>{
+  document.querySelectorAll(".tab").forEach(x=>x.setAttribute("aria-selected",x===t));
+  ["learn","t1","t2"].forEach(id=>document.getElementById(id).hidden=id!==t.dataset.panel);
+  if(synth) synth.cancel();
+}));
+
+/* ---------- learn ---------- */
+const cards=document.getElementById("cards");
+WORDS.forEach((w,i)=>{
+  const c=document.createElement("article"); c.className="card";
+  c.innerHTML=`<div class="stage">${sceneSVG(w.s,w.p)}</div>
+    <span class="tag">${w.tag}</span>
+    <h3 class="phrase">${w.p}</h3>
+    <p class="mean">${cap(w.mean)}.</p>
+    <p class="ex">“${w.ex}”</p>
+    <button class="listen" type="button" id="listen-${i}">🔊 Listen</button>`;
+  c.querySelector("button").addEventListener("click",()=>say(w.p,()=>setTimeout(()=>say(w.ex),350)));
+  cards.appendChild(c);
+});
+
+/* ---------- shared ---------- */
+const progressHTML=(i,n)=>`<div class="progress"><span>${i+1} / ${n}</span><div class="bar"><i style="width:${(i/n)*100}%"></i></div></div>`;
+function finish(box,score,n,restart){
+  const stars=score>=n-1?"⭐⭐⭐":score>=Math.ceil(n/2)?"⭐⭐":"⭐";
+  const msg=score===n?"Excellent! All correct!":score>=Math.ceil(n/2)?"Well done!":"Good try! Practise again.";
+  box.innerHTML=`<div class="stars">${stars}</div><p class="score">${score} / ${n}</p><p class="feedback ok">${msg}</p>
+    <div class="row"><button class="btn solid" type="button" id="${box.id}-again">Play again</button></div>`;
+  say(msg); document.getElementById(box.id+"-again").addEventListener("click",restart);
+}
+
+/* ---------- Task 1: watch & choose ---------- */
+const t1={box:document.getElementById("t1-box")};
+function t1Start(){ t1.order=shuffle(WORDS); t1.i=0; t1.score=0; t1Render(); }
+function t1Render(){
+  const n=t1.order.length; if(t1.i>=n) return finish(t1.box,t1.score,n,t1Start);
+  const w=t1.order[t1.i]; t1.tries=0;
+  const opts=shuffle([w,...shuffle(WORDS.filter(x=>x!==w)).slice(0,3)]);
+  t1.box.innerHTML=progressHTML(t1.i,n)+
+    `<div class="stage big-stage">${sceneSVG(w.s,"Animation "+(t1.i+1))}</div>
+     <p class="q">What is he doing?</p>
+     <div class="choices">${opts.map((o,k)=>`<button class="choice" type="button" id="t1-opt-${k}" data-p="${o.p}">${o.p}</button>`).join("")}</div>
+     <p class="feedback" id="t1-fb" aria-live="polite"></p>
+     <div class="row" id="t1-next" hidden><button class="btn solid" type="button">Next ➜</button></div>`;
+  t1.box.querySelector("#t1-next button").addEventListener("click",()=>{t1.i++;t1Render();});
+  t1.box.querySelectorAll(".choice").forEach(c=>c.addEventListener("click",()=>{
+    const fb=document.getElementById("t1-fb");
+    if(c.dataset.p===w.p){
+      if(t1.tries===0) t1.score++;
+      c.classList.add("right"); t1.box.querySelectorAll(".choice").forEach(x=>x.disabled=true);
+      const line="He is "+w.p+".";
+      fb.className="feedback ok"; fb.textContent="✔ Yes! "+line;
+      say(line); document.getElementById("t1-next").hidden=false;
+    } else {
+      t1.tries++; c.classList.add("wrong"); c.disabled=true;
+      fb.className="feedback no"; fb.textContent="✘ Not this one. Watch again and try again.";
+      say("Try again.");
+    }
+  }));
+}
+t1Start();
+
+/* ---------- Task 2: complete the sentence ---------- */
+const SENT=[
+  {s:"My sister loves ___. She finishes a new book every week.", a:"reading", o:["reading","hiking","cycling"]},
+  {s:"I put on my headphones. I'm ___ on the bus.", a:"listening to music", o:["listening to music","watching movies","crafting"]},
+  {s:"On Friday nights, we eat popcorn and enjoy ___ at home.", a:"watching movies", o:["watching movies","playing sports","hiking"]},
+  {s:"Sara makes cards, paper stars and bracelets. Her favourite hobby is ___.", a:"crafting", o:["crafting","cycling","reading"]},
+  {s:"We put on our boots and went ___ in the mountains.", a:"hiking", o:["hiking","crafting","reading"]},
+  {s:"My brother always wears a helmet when he goes ___.", a:"cycling", o:["cycling","reading","watching movies"]},
+  {s:"Omar is very active. He likes ___: football, basketball and tennis.", a:"playing sports", o:["playing sports","crafting","listening to music"]},
+  {s:"Lina is ___. She can say “hello” in Spanish, French and Italian!", a:"learning a new language", o:["learning a new language","listening to music","playing sports"]}
+];
+const t2={box:document.getElementById("t2-box")};
+function t2Start(){ t2.order=shuffle(SENT); t2.i=0; t2.score=0; t2Render(); }
+function t2Render(){
+  const n=t2.order.length; if(t2.i>=n) return finish(t2.box,t2.score,n,t2Start);
+  const q=t2.order[t2.i]; t2.tries=0; const parts=q.s.split("___"); const full=q.s.replace("___",q.a);
+  t2.box.innerHTML=progressHTML(t2.i,n)+
+    `<div class="t2-grid">
+       <div class="stage mystery" id="t2-stage">?</div>
+       <p class="sentence">${parts[0]}<span class="gap" id="t2-gap">?</span>${parts[1]}</p>
+     </div>
+     <div class="choices t2-choices">${shuffle(q.o).map((o,k)=>`<button class="choice" type="button" id="t2-opt-${k}" data-p="${o}">${o}</button>`).join("")}</div>
+     <p class="feedback" id="t2-fb" aria-live="polite"></p>
+     <div class="row" id="t2-next" hidden><button class="btn" type="button" id="t2-hear">🔊 Hear it again</button><button class="btn solid" type="button" id="t2-go">Next ➜</button></div>`;
+  document.getElementById("t2-go").addEventListener("click",()=>{t2.i++;t2Render();});
+  document.getElementById("t2-hear").addEventListener("click",()=>say(full));
+  t2.box.querySelectorAll(".choice").forEach(c=>c.addEventListener("click",()=>{
+    const fb=document.getElementById("t2-fb");
+    if(c.dataset.p===q.a){
+      if(t2.tries===0) t2.score++;
+      c.classList.add("right"); t2.box.querySelectorAll(".choice").forEach(x=>x.disabled=true);
+      document.getElementById("t2-gap").textContent=q.a;
+      const st=document.getElementById("t2-stage"); st.className="stage"; st.innerHTML=sceneSVG(byP[q.a].s,q.a);
+      fb.className="feedback ok"; fb.textContent="✔ Correct!"; say(full);
+      document.getElementById("t2-next").hidden=false;
+    } else {
+      t2.tries++; c.classList.add("wrong"); c.disabled=true;
+      fb.className="feedback no"; fb.textContent="✘ Not this one. Read the sentence again."; say("Try again.");
+    }
+  }));
+}
+t2Start();
+</script>
+
+</body></html>
